@@ -1,0 +1,81 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+ul li {
+    list-style: none;
+}
+
+
+:root {
+    --dark-color: #222323;
+    --dark-shw-color: rgba(23, 24, 24, 0.678);
+    --white-color: #f0f6f0;
+}
+body {
+    height: 100%;
+    width: 100%;
+    font-family: sans-serif;
+    font-size: 18px;
+    background: var(--dark-color);
+    color: var(--white-color);
+}
+
+.wrapper {
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.box-canvas {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 20px;
+}
+
+.words {
+    padding: 20px;
+    border-radius: 10px;
+    background: var(--dark-shw-color);
+}
+.words-list {
+    column-count: 6;
+}
+
+.words-item {
+    cursor: pointer;
+}
+
+.words-item_active {
+    position: relative;
+}
+.words-item_active::before,
+.words-item_active::after {
+    content: "";
+    width: 24px;
+    height: 2px;
+    background: #fff;
+    position: absolute;
+    top: 8px;
+    left: -6px;
+    transform: rotate(45deg);
+}
+
+.words-item_active::before {
+    transform: rotate(-45deg);
+}
+.words-item_active::after {
+
+    transform: rotate(45deg);
+}
