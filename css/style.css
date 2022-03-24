@@ -11,14 +11,13 @@ ul li {
     list-style: none;
 }
 
-
 :root {
     --dark-color: #222323;
     --dark-shw-color: rgba(23, 24, 24, 0.678);
     --white-color: #f0f6f0;
 }
 body {
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     font-family: sans-serif;
     font-size: 18px;
@@ -27,8 +26,8 @@ body {
 }
 
 .wrapper {
-    overflow: hidden;
     min-height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -66,7 +65,7 @@ body {
     content: "";
     width: 24px;
     height: 2px;
-    background: #fff;
+    background: rgb(214, 44, 44);
     position: absolute;
     top: 8px;
     left: -6px;
@@ -77,7 +76,6 @@ body {
     transform: rotate(-45deg);
 }
 .words-item_active::after {
-
     transform: rotate(45deg);
 }
 

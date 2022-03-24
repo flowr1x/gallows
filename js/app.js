@@ -11,13 +11,14 @@ boxCanvas.append(canvas);
 const root = getComputedStyle(document.querySelector(":root"));
 
 // CONFIGURE GAME 
-const listSecretWords = ["cock", "book", "apple", "orange"];
+const listSecretWords = ["css", "canvas", "html", "javascript"];
 const wordsList = document.querySelector(".words-list");
 const output = document.querySelector(".output");
 
-let configGame = {};
+const configGame = {};
 let activeSymbol = [];
 let life = 0;
+let isGameOver = false;
 
 const paintCoords = [
     {moveX: canvas.width / 2, moveY: canvas.height, x: canvas.width / 2, y: 80},
@@ -28,20 +29,14 @@ const paintCoords = [
     {moveX: canvas.width - 50, moveY: 130, x: canvas.width - 50, y: 170},
     {moveX: canvas.width - 50, moveY: 140, x: canvas.width - 30, y: 150},
     {moveX: canvas.width - 50, moveY: 140, x: canvas.width - 70, y: 150},
-    {moveX: canvas.width - 50, moveY: 140, x: canvas.width - 50, y: 170},
+
     {moveX: canvas.width - 50, moveY: 170, x: canvas.width - 70, y: 190},
     {moveX: canvas.width - 50, moveY: 170, x: canvas.width - 30, y: 190},
 ];
 
 // PAINT GALLOWS 
 function paintSceleton(coords, count) {
-    if (count > 10) {
-        gameOver();
-        return;
-    }
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    clearWindow();
     ctx.fillStyle = root.getPropertyValue("--white-color");
     ctx.strokeStyle = root.getPropertyValue("--white-color");
     ctx.lineWidth = 2;
@@ -55,8 +50,16 @@ function paintSceleton(coords, count) {
         else paintLine(moveX, moveY, x, y); 
         i++;
     }
-
     ctx.stroke();
+
+    if (count == 10) {
+        gameOver(configGame);
+        return;
+    }
+}
+
+function clearWindow() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function paintLine(moveX, moveY, x, y) {
@@ -67,10 +70,6 @@ function paintLine(moveX, moveY, x, y) {
 function paintArc(moveX, moveY, x, y, radius) {
     ctx.moveTo(moveX, moveY);
     ctx.arc(x, y, radius, 30, Math.PI * 2, true);
-}
-
-function gameOver() {
-
 }
 
 // WORK WITH FORM AND SYMBOL
@@ -97,12 +96,10 @@ function getRandomSecretWord(arr) {
     return arr[rand];
 }
 
-wordsList.addEventListener("click", event => {
+function clickOnListWord(event) {
     const {target} = event;
 
-    if (!target.closest(".words-item")) {
-        return;
-    } 
+    if (!target.closest(".words-item")) return;
 
     const symbol = target.innerHTML.toLowerCase();
     if (activeSymbol.includes(symbol)) {
@@ -120,33 +117,53 @@ wordsList.addEventListener("click", event => {
         }
     } else {
         life++;
+        console.log(life);
         paintSceleton(paintCoords, life);
     }
 
     target.classList.add("words-item_active");
+    
+    if (!isGameOver && wordGuessed(configGame)) 
+        hasGuessWord(configGame.outputBox);
+}
 
-    if (guessWord(configGame)) {
-        activeSymbol = [];
-
-        for (let item of document.querySelectorAll(".words-item")) {
-            item.classList.remove("words-item_active");
-        }
-
-        configGame.outputBox.remove();
-        createFormToSecretWord(listSecretWords, configGame);
-    }
-});
-
-function guessWord( {secretWord, outputBox} ) {
+function wordGuessed({secretWord, outputBox}) {
     for (let i = 0; i < secretWord.length; i++) { 
         if (secretWord[i] != outputBox.children[i].innerHTML) 
             return false;
     }
+
     return true;
 }
 
-function gameLoop() {
+function hasGuessWord(outputBox) {
+    activeSymbol = [];
+
+    for (let item of document.querySelectorAll(".words-item")) {
+        item.classList.remove("words-item_active");
+    }
+
+    outputBox.remove();
     createFormToSecretWord(listSecretWords, configGame);
 }
 
-gameLoop();
+function gameOver( {secretWord, outputBox} ) {
+    isGameOver = true;
+
+    for (let i = 0; i < secretWord.length; i++) {
+        outputBox.children[i].innerHTML = secretWord[i];
+    }
+
+    wordsList.removeEventListener("click", clickOnListWord);
+    life = 0;    
+
+    setTimeout(() => {
+        clearWindow();
+        hasGuessWord(configGame.outputBox);
+        wordsList.addEventListener("click", clickOnListWord);
+    }, 2000)     
+}
+
+
+wordsList.addEventListener("click", clickOnListWord);
+createFormToSecretWord(listSecretWords, configGame);
